@@ -24,7 +24,7 @@ def load_next_image():
         image_path = f"{st.session_state.image_counter}.jpg"
         try:
             image = Image.open(image_path)
-            st.image(image, caption=f"Immagine {st.session_state.image_counter}", use_column_width=True)
+            st.image(image, caption=f"Immagine {st.session_state.image_counter}", use_container_width=True)
         except FileNotFoundError:
             st.warning(f"Immagine {st.session_state.image_counter}.jpg non trovata.")
 
