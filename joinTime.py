@@ -33,12 +33,12 @@ def load_next_image():
             st.session_state.end_time = time.time()  # Ferma il timer
 
         total_time = st.session_state.end_time - st.session_state.start_time
-        st.success(f"Hai completato la sequenza in {total_time:.2f} secondi!")
+        st.success(f"Hai finito il J in {total_time:.2f} secondi!")
 
 # Interfaccia utente
-st.title("Visualizzatore di Immagini con Timer")
+st.title("Creatore di Jointssss :) <3 by MickyBi")
 
-if st.button("Mostra Immagine Successiva"):
+if st.button("falla suuuu!"):
     load_next_image()
 
 # Mostra il timer se è iniziato
