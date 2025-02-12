@@ -1,8 +1,7 @@
 import streamlit as st
 import time
 from PIL import Image
-import warnings
-warnings.filterwarning("ignore")
+
 
 # Configurazione iniziale
 st.set_page_config(page_title="Sequenza di Immagini con Timer", layout="centered")
