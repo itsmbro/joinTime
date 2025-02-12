@@ -19,12 +19,12 @@ def load_next_image():
         st.session_state.start_time = time.time()  # Avvia il timer
 
     if st.session_state.image_counter <= 10:
-        image_path = f"{st.session_state.image_counter}.jpeg"
+        image_path = f"{st.session_state.image_counter}.jpg"
         try:
             image = Image.open(image_path)
             st.image(image, caption=f"Immagine {st.session_state.image_counter}", use_column_width=True)
         except FileNotFoundError:
-            st.warning(f"Immagine {st.session_state.image_counter}.jpeg non trovata.")
+            st.warning(f"Immagine {st.session_state.image_counter}.jpg non trovata.")
 
         st.session_state.image_counter += 1
 
