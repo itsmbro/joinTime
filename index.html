@@ -6,6 +6,7 @@
     <title>Ristorante Da Mario</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
         * {
             margin: 0;
@@ -20,27 +21,54 @@
             text-align: center;
         }
 
-        header {
-            background: url('https://source.unsplash.com/1600x900/?restaurant,food') center/cover no-repeat;
-            color: white;
-            padding: 50px 20px;
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            text-align: center;
+            z-index: 1000;
         }
 
-        header h1 {
-            font-size: 48px;
-            font-weight: 600;
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #ff5a5f;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: url('https://source.unsplash.com/1600x900/?restaurant,dinner') center/cover no-repeat;
+            height: 100vh;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.6);
         }
 
+        .hero h1 {
+            font-size: 50px;
+            font-weight: bold;
+        }
+
         .btn {
-            display: inline-block;
             padding: 15px 30px;
             background: #ff5a5f;
             color: white;
             text-decoration: none;
             border-radius: 5px;
             margin-top: 20px;
-            font-size: 18px;
+            font-size: 20px;
             transition: 0.3s;
         }
 
@@ -48,27 +76,30 @@
             background: #d93a3f;
         }
 
-        .menu-section {
-            padding: 50px 20px;
+        /* Chi Siamo */
+        .about {
+            padding: 60px 20px;
+            background: #ffe5d9;
         }
 
-        .menu-section h2 {
-            font-size: 32px;
-            margin-bottom: 20px;
+        /* Menu */
+        .menu-section {
+            padding: 50px 20px;
+            background: white;
         }
 
         .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 20px;
-            max-width: 900px;
-            margin: auto;
         }
 
         .menu-item {
-            background: white;
+            background: #ffdab9;
             padding: 15px;
             border-radius: 10px;
+            width: 250px;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -77,28 +108,84 @@
             border-radius: 10px;
         }
 
-        .menu-item h3 {
-            margin-top: 10px;
-            font-size: 22px;
+        /* Recensioni */
+        .recensioni {
+            background: #f4a261;
+            padding: 50px 20px;
+            color: white;
         }
 
+        .recensione {
+            font-size: 20px;
+            font-style: italic;
+        }
+
+        /* Mappa */
+        .mappa {
+            padding: 50px 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+
+        /* Contatti */
+        .contatti {
+            background: #2a9d8f;
+            padding: 50px 20px;
+            color: white;
+        }
+
+        input, textarea {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* Footer */
         .footer {
             background: #222;
             color: white;
             padding: 20px;
-            margin-top: 50px;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-size: 24px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Benvenuti al Ristorante Da Mario</h1>
-        <p>Il miglior cibo italiano della città!</p>
-        <a href="tel:+39123456789" class="btn">Prenota un Tavolo</a>
-    </header>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="#about">Chi Siamo</a>
+        <a href="#menu">Menu</a>
+        <a href="#recensioni">Recensioni</a>
+        <a href="#contatti">Contatti</a>
+    </div>
 
-    <section class="menu-section">
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Ristorante Da Mario</h1>
+        <p>Esperienza culinaria indimenticabile</p>
+        <a href="tel:+39123456789" class="btn">Prenota un Tavolo</a>
+    </div>
+
+    <!-- Chi Siamo -->
+    <div class="about" id="about">
+        <h2>Chi Siamo</h2>
+        <p>Da Mario è il ristorante perfetto per gustare la vera cucina italiana. Ingredienti freschi, passione e tradizione.</p>
+    </div>
+
+    <!-- Menu -->
+    <div class="menu-section" id="menu">
         <h2>Il Nostro Menu</h2>
         <div class="menu-grid">
             <div class="menu-item">
@@ -109,16 +196,35 @@
                 <img src="https://source.unsplash.com/300x200/?pizza" alt="Pizza">
                 <h3>Pizza Margherita - €10</h3>
             </div>
-            <div class="menu-item">
-                <img src="https://source.unsplash.com/300x200/?tiramisu" alt="Tiramisù">
-                <h3>Tiramisù - €6</h3>
-            </div>
         </div>
-    </section>
+    </div>
 
-    <footer class="footer">
-        <p>📍 Via Roma 123, Milano - 📞 <a href="tel:+39123456789" style="color: white; text-decoration: none;">+39 123 456 789</a></p>
-    </footer>
+    <!-- Recensioni -->
+    <div class="recensioni" id="recensioni">
+        <h2>Cosa Dicono di Noi</h2>
+        <p class="recensione">"Fantastico! Cibo eccellente e atmosfera perfetta!" - Anna R.</p>
+        <p class="recensione">"Il miglior ristorante italiano della città!" - Marco B.</p>
+    </div>
+
+    <!-- Mappa -->
+    <div class="mappa">
+        <h2>Dove Siamo</h2>
+        <iframe src="https://maps.google.com/maps?q=Milano&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
+    </div>
+
+    <!-- Contatti -->
+    <div class="contatti" id="contatti">
+        <h2>Contattaci</h2>
+        <input type="text" placeholder="Il tuo nome">
+        <input type="email" placeholder="La tua email">
+        <textarea placeholder="Il tuo messaggio"></textarea>
+        <a href="#" class="btn">Invia Messaggio</a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2025 Ristorante Da Mario</p>
+    </div>
 
 </body>
 </html>
