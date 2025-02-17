@@ -1,74 +1,65 @@
 import streamlit as st
-import pygame
-import threading
-import time
-from PIL import Image
 import numpy as np
+import time
+from PIL import Image, ImageDraw
 
-# Inizializza Pygame
-pygame.init()
-
-# Impostazioni Gioco
+# Impostazioni
 LARGHEZZA, ALTEZZA = 500, 700
+NAVICELLA_X = 225
 ASTEROIDI = []
-NAVICELLA_POS = [250, 600]
 GIOCO_ATTIVO = True
 
-# Creazione finestra di gioco (Pygame)
-SCHERMO = pygame.Surface((LARGHEZZA, ALTEZZA))
-
-# Caricamento immagini
-NAVICELLA = pygame.image.load("https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Space_shuttle_columbia_launching.jpg/200px-Space_shuttle_columbia_launching.jpg")
-NAVICELLA = pygame.transform.scale(NAVICELLA, (50, 50))
-ASTEROIDE = pygame.image.load("https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Asteroid_243_Ida_%28cropped%29.jpg/150px-Asteroid_243_Ida_%28cropped%29.jpg")
-ASTEROIDE = pygame.transform.scale(ASTEROIDE, (50, 50))
-
-def aggiorna_gioco():
-    """Loop del gioco in background"""
-    global ASTEROIDI, NAVICELLA_POS, GIOCO_ATTIVO
+# Crea sfondo
+def crea_sfondo():
+    img = Image.new("RGB", (LARGHEZZA, ALTEZZA), "black")
+    draw = ImageDraw.Draw(img)
     
+    # Disegna asteroidi
+    for ast in ASTEROIDI:
+        draw.ellipse((ast[0], ast[1], ast[0]+50, ast[1]+50), fill="gray")
+
+    # Disegna navicella
+    draw.rectangle((NAVICELLA_X, 600, NAVICELLA_X+50, 650), fill="blue")
+
+    return img
+
+# Loop del gioco
+def aggiorna_gioco():
+    global ASTEROIDI, NAVICELLA_X, GIOCO_ATTIVO
+
     while GIOCO_ATTIVO:
-        SCHERMO.fill((0, 0, 0))  # Sfondo nero
+        time.sleep(0.2)  # Velocità gioco
 
-        # Aggiunge nuovi asteroidi ogni secondo
-        if time.time() % 1 < 0.05:
-            ASTEROIDI.append([np.random.randint(0, LARGHEZZA - 50), 0])
+        # Crea nuovi asteroidi
+        if np.random.rand() < 0.2:
+            ASTEROIDI.append([np.random.randint(0, LARGHEZZA-50), 0])
 
-        # Disegna la navicella
-        SCHERMO.blit(NAVICELLA, (NAVICELLA_POS[0], NAVICELLA_POS[1]))
+        # Muove asteroidi
+        ASTEROIDI[:] = [[x, y+20] for x, y in ASTEROIDI if y < ALTEZZA]
 
-        # Muove gli asteroidi
-        nuovi_asteroidi = []
-        for ast in ASTEROIDI:
-            ast[1] += 5
-            if ast[1] < ALTEZZA:
-                nuovi_asteroidi.append(ast)
-            SCHERMO.blit(ASTEROIDE, (ast[0], ast[1]))
-        ASTEROIDI = nuovi_asteroidi
-
-        # Controllo collisioni
-        for ast in ASTEROIDI:
-            if abs(ast[0] - NAVICELLA_POS[0]) < 50 and abs(ast[1] - NAVICELLA_POS[1]) < 50:
+        # Controllo collisione
+        for x, y in ASTEROIDI:
+            if abs(x - NAVICELLA_X) < 50 and y > 550:
                 GIOCO_ATTIVO = False
-
-        # Aggiorna schermo
-        pygame.image.save(SCHERMO, "game.png")
-        time.sleep(0.05)
-
-# Avvia il thread del gioco
-threading.Thread(target=aggiorna_gioco, daemon=True).start()
+                break
+        
+        # Aggiorna l'immagine
+        img = crea_sfondo()
+        img.save("game.png")
 
 # INTERFACCIA STREAMLIT
 st.title("🚀 Dodge The Asteroids!")
-st.text("Muovi la navicella e evita gli asteroidi! 🔥")
 
 col1, col2, col3 = st.columns(3)
-if col1.button("⬅️"):
-    NAVICELLA_POS[0] -= 20
-if col3.button("➡️"):
-    NAVICELLA_POS[0] += 20
+if col1.button("⬅️") and NAVICELLA_X > 0:
+    NAVICELLA_X -= 30
+if col3.button("➡️") and NAVICELLA_X < LARGHEZZA - 50:
+    NAVICELLA_X += 30
 
 st.image("game.png", caption="Gameplay in tempo reale!")
 
-if not GIOCO_ATTIVO:
+# Avvia il gioco
+if GIOCO_ATTIVO:
+    aggiorna_gioco()
+else:
     st.error("💥 GAME OVER! Ricarica la pagina per giocare di nuovo!")
