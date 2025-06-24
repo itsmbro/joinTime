@@ -1,65 +1,60 @@
 import streamlit as st
+import cv2
+import mediapipe as mp
 import numpy as np
 import time
-from PIL import Image, ImageDraw
 
-# Impostazioni
-LARGHEZZA, ALTEZZA = 500, 700
-NAVICELLA_X = 225
-ASTEROIDI = []
-GIOCO_ATTIVO = True
+st.title("Gioco con lo Sguardo 👀")
+st.write("Sposta l'occhio nella direzione giusta per muovere l'emoji!")
 
-# Crea sfondo
-def crea_sfondo():
-    img = Image.new("RGB", (LARGHEZZA, ALTEZZA), "black")
-    draw = ImageDraw.Draw(img)
-    
-    # Disegna asteroidi
-    for ast in ASTEROIDI:
-        draw.ellipse((ast[0], ast[1], ast[0]+50, ast[1]+50), fill="gray")
+# Griglia
+if "pos" not in st.session_state:
+    st.session_state.pos = [2, 2]  # centro griglia
 
-    # Disegna navicella
-    draw.rectangle((NAVICELLA_X, 600, NAVICELLA_X+50, 650), fill="blue")
+# Mediapipe setup
+face_mesh = mp.solutions.face_mesh.FaceMesh(refine_landmarks=True)
+cap = cv2.VideoCapture(0)
 
-    return img
+frame_placeholder = st.empty()
 
-# Loop del gioco
-def aggiorna_gioco():
-    global ASTEROIDI, NAVICELLA_X, GIOCO_ATTIVO
+# Direzione dello sguardo
+def get_gaze_direction(landmarks):
+    right_eye = landmarks[474]  # pupilla destra approx
+    x = right_eye.x
+    if x < 0.4:
+        return "left"
+    elif x > 0.6:
+        return "right"
+    return "center"
 
-    while GIOCO_ATTIVO:
-        time.sleep(0.2)  # Velocità gioco
+# Gioco loop semplificato
+for _ in range(100):  # 100 iterazioni al massimo
+    ret, frame = cap.read()
+    frame = cv2.flip(frame, 1)
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = face_mesh.process(rgb)
 
-        # Crea nuovi asteroidi
-        if np.random.rand() < 0.2:
-            ASTEROIDI.append([np.random.randint(0, LARGHEZZA-50), 0])
+    direction = "center"
 
-        # Muove asteroidi
-        ASTEROIDI[:] = [[x, y+20] for x, y in ASTEROIDI if y < ALTEZZA]
+    if results.multi_face_landmarks:
+        landmarks = results.multi_face_landmarks[0].landmark
+        direction = get_gaze_direction(landmarks)
 
-        # Controllo collisione
-        for x, y in ASTEROIDI:
-            if abs(x - NAVICELLA_X) < 50 and y > 550:
-                GIOCO_ATTIVO = False
-                break
-        
-        # Aggiorna l'immagine
-        img = crea_sfondo()
-        img.save("game.png")
+    # Movimento sulla griglia
+    if direction == "left":
+        st.session_state.pos[1] = max(0, st.session_state.pos[1] - 1)
+    elif direction == "right":
+        st.session_state.pos[1] = min(4, st.session_state.pos[1] + 1)
 
-# INTERFACCIA STREAMLIT
-st.title("🚀 Dodge The Asteroids!")
+    # Mostra frame webcam (opzionale)
+    frame = cv2.resize(frame, (300, 200))
+    frame_placeholder.image(frame, channels="BGR")
 
-col1, col2, col3 = st.columns(3)
-if col1.button("⬅️") and NAVICELLA_X > 0:
-    NAVICELLA_X -= 30
-if col3.button("➡️") and NAVICELLA_X < LARGHEZZA - 50:
-    NAVICELLA_X += 30
+    # Mostra la griglia
+    grid = [["⬜" for _ in range(5)] for _ in range(5)]
+    x, y = st.session_state.pos
+    grid[x][y] = "👁️"
+    for row in grid:
+        st.write(" ".join(row))
 
-st.image("game.png", caption="Gameplay in tempo reale!")
-
-# Avvia il gioco
-if GIOCO_ATTIVO:
-    aggiorna_gioco()
-else:
-    st.error("💥 GAME OVER! Ricarica la pagina per giocare di nuovo!")
+    time.sleep(1)  # aggiorna ogni secondo
